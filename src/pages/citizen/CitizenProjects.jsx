@@ -923,7 +923,7 @@ function CitizenProjects() {
           <img src="/trinetra-logo.jpg" alt="TRINETRA logo" />
           <div>
             <strong>TRINETRA</strong>
-            <span>See. Verify. Improve.</span>
+        
           </div>
         </div>
 

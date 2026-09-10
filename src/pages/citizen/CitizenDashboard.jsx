@@ -337,9 +337,10 @@ const dashboardStyles = `
   }
 
   .citizen-dashboard-page.dark-theme .section-switch .switch-btn.active {
-    background: rgba(139, 183, 255, 0.12);
-    color: var(--text-main);
-    border-color: rgba(139, 183, 255, 0.28);
+    background: linear-gradient(135deg, #1d3d5d, #112c46) !important;
+    color: #f4f9ff !important;
+    border-color: rgba(139, 183, 255, 0.4) !important;
+    box-shadow: inset 0 0 0 1px rgba(139, 183, 255, 0.18);
   }
 
   .citizen-dashboard-page.dark-theme .section-switch .switch-btn {
@@ -362,14 +363,60 @@ const dashboardStyles = `
     flex-direction: column;
     padding: 18px 16px 14px;
     box-sizing: border-box;
+    transition: width 0.25s ease, padding 0.25s ease;
+    overflow: hidden;
+  }
+
+  .citizen-sidebar.collapsed {
+    width: 70px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .citizen-sidebar.collapsed .brand-main {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .citizen-sidebar.collapsed .citizen-brand strong,
+  .citizen-sidebar.collapsed .nav-item-label,
+  .citizen-sidebar.collapsed .citizen-helpline,
+  .citizen-sidebar.collapsed .help-label,
+  .citizen-sidebar.collapsed .help-number,
+  .citizen-sidebar.collapsed .help-meta,
+  .citizen-sidebar.collapsed .help-pill {
+    display: none;
+  }
+
+  .citizen-sidebar.collapsed .citizen-brand {
+    justify-content: center;
+    padding-bottom: 12px;
+  }
+
+  .citizen-sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .citizen-sidebar.collapsed .nav-item .icon {
+    font-size: 1.1rem;
   }
 
   .citizen-brand {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
     padding: 6px 4px 16px;
     margin-bottom: 18px;
+  }
+
+  .brand-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
   }
 
   .citizen-brand img {
@@ -378,6 +425,7 @@ const dashboardStyles = `
     border-radius: 10px;
     object-fit: cover;
     box-shadow: 0 4px 12px rgba(24, 45, 73, 0.12);
+    flex-shrink: 0;
   }
 
   .citizen-brand strong {
@@ -387,6 +435,27 @@ const dashboardStyles = `
     letter-spacing: 0.04em;
     color: #1f2b3d;
     font-weight: 800;
+  }
+
+  .sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #dfeaf6;
+    background: #ffffff;
+    color: #435a76;
+    box-shadow: 0 6px 14px rgba(25, 57, 90, 0.06);
+    cursor: pointer;
+    font-size: 0.7rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .sidebar-toggle.open {
+    transform: rotate(180deg);
   }
 
   .citizen-brand span {
@@ -480,9 +549,9 @@ const dashboardStyles = `
     background: #f8fafd;
     border-bottom: 1px solid #dfe8f3;
     padding: 12px 18px 10px;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(210px, 320px) minmax(280px, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
     gap: 16px;
   }
 
@@ -492,17 +561,20 @@ const dashboardStyles = `
     gap: 10px;
     font-size: 0.82rem;
     color: #53677f;
+    min-width: 0;
   }
 
   .location-chip {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 12px;
+    padding: 10px 16px;
+    min-width: 150px;
     border: 1px solid #dfe9f3;
     background: #ffffff;
     border-radius: 10px;
     font-weight: 600;
+    font-size: 0.82rem;
   }
 
   .location-select {
@@ -517,16 +589,18 @@ const dashboardStyles = `
   }
 
   .topbar-right {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto minmax(280px, 1fr) auto auto;
     align-items: center;
     gap: 12px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: end;
+    min-width: 0;
   }
 
   .search-box {
     position: relative;
-    width: 300px;
+    width: min(100%, 500px);
+    justify-self: center;
   }
 
   .search-box input {
@@ -538,6 +612,7 @@ const dashboardStyles = `
     color: #485f79;
     font-size: 0.82rem;
     outline: none;
+    min-height: 42px;
   }
 
   .search-box .search-icon {
@@ -553,11 +628,12 @@ const dashboardStyles = `
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 7px 12px;
+    padding: 8px 12px;
     border: 1px solid #dfeaf6;
     background: linear-gradient(135deg, #edf5ff 0%, #ffffff 100%);
     border-radius: 14px;
     box-shadow: 0 8px 18px rgba(25, 57, 90, 0.06);
+    min-width: 170px;
   }
 
   .mp-badge {
@@ -594,82 +670,143 @@ const dashboardStyles = `
     font-weight: 800;
   }
 
-  .profile-panel {
-    display: flex;
+  .profile-menu {
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
+  }
+
+  .profile-panel {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: #ffffff;
     border: 1px solid #dfeaf6;
-    border-radius: 14px;
-    padding: 6px 10px 6px 8px;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
     box-shadow: 0 6px 18px rgba(25, 57, 90, 0.05);
     cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .profile-panel:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(25, 57, 90, 0.09);
   }
 
   .profile-avatar {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: linear-gradient(135deg, #123b5d 0%, #2e6b9f 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    font-size: 0.72rem;
+    font-size: 1.05rem;
     font-weight: 800;
   }
 
-  .profile-meta {
+  .profile-chevron-button {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #dfeaf6;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #39506a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.7rem;
+    padding: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 10px rgba(25, 57, 90, 0.04);
+  }
+
+  .profile-chevron-button:hover {
+    box-shadow: 0 8px 16px rgba(25, 57, 90, 0.08);
+  }
+
+  .profile-chevron-button.open {
+    transform: rotate(180deg);
+  }
+
+  .profile-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 220px;
+    background: rgba(17, 31, 47, 0.98);
+    border: 1px solid rgba(162, 182, 210, 0.2);
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(2, 6, 12, 0.35);
+    padding: 14px 12px 12px;
+    color: #edf4ff;
+    z-index: 30;
+  }
+
+  .profile-dropdown-header {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    line-height: 1.2;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(162, 182, 210, 0.18);
+    margin-bottom: 8px;
+  }
+
+  .profile-dropdown .profile-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 0.62rem;
   }
 
   .profile-name {
-    color: #1d2d42;
-    font-size: 0.76rem;
+    color: #edf4ff;
+    font-size: 0.82rem;
     font-weight: 800;
+    line-height: 1.2;
   }
 
   .profile-role {
-    color: #66798d;
-    font-size: 0.62rem;
+    color: #c9d8ee;
+    font-size: 0.68rem;
     font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .profile-detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 0.7rem;
+    color: #dfeaff;
+  }
+
+  .profile-detail-list span {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    color: #c9d8ee;
+  }
+
+  .profile-detail-list strong {
+    color: #edf4ff;
   }
 
   .profile-chevron {
-    color: #58708c;
-    font-size: 0.78rem;
-    margin-left: 2px;
+    display: none;
   }
 
   .content {
     padding: 0 18px 20px;
     overflow: auto;
   }
-
-  .feed-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    background: #f9fbff;
-    border: 1px solid #e1e9f5;
-    border-radius: 12px;
-    padding: 10px 14px;
-    margin-top: 16px;
-    font-size: 0.82rem;
-    color: #53667c;
-  }
-
-  .feed-banner .feed-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-  }
-
   .feed-info-icon {
     font-size: 1rem;
     color: #1d3b5e;
@@ -770,6 +907,8 @@ const dashboardStyles = `
   .action-btn.light {
     background: #ffffff;
     color: #1d2d40;
+    padding: 9px 14px;
+    min-width: 150px;
   }
 
   .action-btn.primary {
@@ -1553,6 +1692,8 @@ function CitizenDashboard() {
   const navigate = useNavigate();
   const [selectedArea, setSelectedArea] = useState('Ludhiana, Punjab');
   const [searchText, setSearchText] = useState('');
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const { theme } = useCitizenTheme();
 
   const handleDownloadReport = () => {
@@ -1573,13 +1714,24 @@ function CitizenDashboard() {
       <style>{dashboardStyles}</style>
 
       <div className="citizen-dashboard-shell">
-        <aside className="citizen-sidebar">
+        <aside className={`citizen-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
           <div className="citizen-brand">
-            <img src="/trinetra-logo.jpg" alt="TRINETRA logo" />
-            <div>
-              <strong>TRINETRA</strong>
-              <span>See. Verify. Improve.</span>
+            <div className="brand-main">
+              <img src="/trinetra-logo.jpg" alt="TRINETRA logo" />
+              <div>
+                <strong>TRINETRA</strong>
+              </div>
             </div>
+
+            <button
+              type="button"
+              className={`sidebar-toggle ${sidebarCollapsed ? '' : 'open'}`}
+              aria-label={sidebarCollapsed ? 'Open sidebar' : 'Close sidebar'}
+              aria-expanded={!sidebarCollapsed}
+              onClick={() => setSidebarCollapsed((prev) => !prev)}
+            >
+              {sidebarCollapsed ? '›' : '‹'}
+            </button>
           </div>
 
           <nav className="side-nav" aria-label="Sidebar navigation">
@@ -1589,7 +1741,7 @@ function CitizenDashboard() {
               return (
                 <Link key={item.label} to={item.to} className={`nav-item ${isActive ? 'active' : ''}`}>
                   <span className="icon">{item.icon}</span>
-                  <span>{item.label}</span>
+                  <span className="nav-item-label">{item.label}</span>
                 </Link>
               );
             })}
@@ -1632,33 +1784,50 @@ function CitizenDashboard() {
                 </div>
               </div>
 
-              <button className="profile-panel" type="button" aria-label="User profile">
-                <div className="profile-avatar">LG</div>
-                <div className="profile-meta">
-                  <span className="profile-name">Ludhiana Guest</span>
-                  <span className="profile-role">Citizen ID: PB-07-1042</span>
+              <div className="profile-panel-wrap" style={{ position: 'relative' }}>
+                <div className="profile-menu">
+                  <button
+                    className="profile-panel"
+                    type="button"
+                    aria-label="User profile"
+                    onClick={() => setProfileOpen(false)}
+                  >
+                    <div className="profile-avatar">👤</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`profile-chevron-button ${profileOpen ? 'open' : ''}`}
+                    aria-label={profileOpen ? 'Close account details' : 'Open account details'}
+                    aria-expanded={profileOpen}
+                    onClick={() => setProfileOpen((prev) => !prev)}
+                  >
+                    ▾
+                  </button>
                 </div>
-                <span className="profile-chevron">▾</span>
-              </button>
+
+                {profileOpen && (
+                  <div className="profile-dropdown" role="menu" aria-label="User account details">
+                    <div className="profile-dropdown-header">
+                      <div className="profile-avatar">👤</div>
+                      <div>
+                        <div className="profile-name">Ludhiana Guest</div>
+                        <div className="profile-role">Citizen ID: PB-07-1042</div>
+                      </div>
+                    </div>
+
+                    <div className="profile-detail-list">
+                      <span><label>Area</label><strong>Ludhiana</strong></span>
+                      <span><label>State</label><strong>Punjab</strong></span>
+                      <span><label>Role</label><strong>Citizen</strong></span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </header>
 
           <div className="content">
-            <div className="feed-banner">
-              <div className="feed-left">
-                <span className="feed-info-icon">ℹ</span>
-                <div>
-                  <strong>Public Information Feed:</strong> Track public infrastructure works, project progress, and public reports in your selected area:
-                  <span className="feed-area"> Ludhiana Parliamentary Constituency (Punjab)</span>
-                </div>
-              </div>
-
-              <div className="feed-status">
-                <span className="feed-dot" />
-                Live Public Feed
-              </div>
-            </div>
-
             <section className="page-header">
               <div>
                 <div className="eyebrow">
@@ -1707,124 +1876,6 @@ function CitizenDashboard() {
                   </div>
                 </div>
               ))}
-            </section>
-
-            <section className="map-panel">
-              <div className="panel-top">
-                <div className="panel-title-wrap">
-                  <span style={{ color: '#1d3b5e', fontSize: '1.1rem' }}>⌖</span>
-                  <h2>Area Infrastructure Map</h2>
-                </div>
-
-                <div className="section-switch">
-                  <button className="switch-btn active" type="button">Map View</button>
-                  <button className="switch-btn" type="button">List View</button>
-                </div>
-
-                <div className="filter-row">
-                  <div className="filter">
-                    <select defaultValue="All Sectors (24)">
-                      <option>All Sectors (24)</option>
-                      <option>Roads &amp; Connectivity</option>
-                      <option>Water &amp; Sanitation</option>
-                    </select>
-                    <span className="caret">▾</span>
-                  </div>
-
-                  <div className="filter">
-                    <select defaultValue="All Execution Statuses">
-                      <option>All Execution Statuses</option>
-                      <option>On Track (17)</option>
-                      <option>Delayed / Behind (7)</option>
-                    </select>
-                    <span className="caret">▾</span>
-                  </div>
-
-                  <div className="filter">
-                    <select defaultValue="All Blocks &amp; Wards">
-                      <option>All Blocks &amp; Wards</option>
-                      <option>Ludhiana West</option>
-                      <option>Sahnewal Rural Block</option>
-                    </select>
-                    <span className="caret">▾</span>
-                  </div>
-
-                  <button className="reset-btn" type="button" aria-label="Reset filters">↺</button>
-                </div>
-              </div>
-
-              <div className="map-stage">
-                <svg viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true">
-                  <defs>
-                    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
-                      <path d="M 42 0 L 0 0 0 42" fill="none" stroke="#ccd9ea" strokeWidth="1" />
-                    </pattern>
-                  </defs>
-                  <rect width="1000" height="420" fill="url(#grid)" opacity="0.5" />
-                  <path d="M-20 150 C150 170, 260 240, 500 250 S840 230, 1040 270" stroke="#8ab2d5" strokeWidth="9" fill="none" opacity="0.55" />
-                  <path d="M120 0 L450 220 L860 420" stroke="#d4deea" strokeWidth="12" fill="none" />
-                  <path d="M-40 300 L440 220 L980 170" stroke="#d4deea" strokeWidth="8" fill="none" />
-                  <path d="M420 220 L360 420" stroke="#d4deea" strokeWidth="8" fill="none" />
-                  <text x="340" y="185" fontSize="12" fill="#6b8197" fontWeight="700">SIDHWAN CANAL BRANCH</text>
-                  <text x="560" y="310" fontSize="11" fill="#6f7f97" fontWeight="700" transform="rotate(35 560 310)">NH-44 (GT ROAD) TO DELHI</text>
-                  <text x="200" y="260" fontSize="11" fill="#6f7f97" fontWeight="700" transform="rotate(-10 200 260)">FEROZEPUR ROAD (NH-5)</text>
-                  <text x="440" y="172" fontSize="11" fill="#616f80" fontWeight="700">LUDHIANA CENTRAL</text>
-                  <text x="170" y="120" fontSize="11" fill="#617086" fontWeight="700">CIVIL LINES ZONE</text>
-                  <text x="180" y="330" fontSize="11" fill="#617086" fontWeight="700">MODEL TOWN / MODEL GRAM</text>
-                  <text x="760" y="180" fontSize="11" fill="#617086" fontWeight="700">SAHNEWAL BLOCK</text>
-                  <text x="300" y="390" fontSize="11" fill="#617086" fontWeight="700">GILL RURAL CIRCLE</text>
-                </svg>
-
-                <div style={{ position: 'absolute', left: '20px', top: '20px', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.92)', border: '1px solid #dfe9f4', borderRadius: '10px', padding: '8px 10px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div style={{ fontWeight: '800', color: '#1d2d42', fontSize: '0.7rem' }}>N</div>
-                    <div style={{ fontSize: '1rem', color: '#304763' }}>⤢</div>
-                  </div>
-                  <div style={{ borderLeft: '1px solid #dfe9f4', paddingLeft: '8px', fontSize: '0.7rem', color: '#5d7389' }}>
-                    <div>Scale: 1:25,000</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                      <span style={{ display: 'inline-block', width: '40px', height: '3px', background: '#1d2d42', borderRadius: '999px' }} />
-                      <span>2.0 km</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="map-pin" style={{ left: '46%', top: '58%' }}>
-                  <div className="pin-card">
-                    <div className="tag-row">
-                      <span className="red-tag">Delayed • 24% Behind</span>
-                      <span>ID: PB-LDH-2023-041</span>
-                    </div>
-                    <h4>Rural Road Improvement: Gill Rd to NH44 Link</h4>
-                    <div className="pin-meta">
-                      <div>
-                        <span>Sanctioned:</span>
-                        <strong>₹1.28 Cr (MPLADS)</strong>
-                      </div>
-                      <div>
-                        <span>Contractor:</span>
-                        <strong>Satluj Infra Ltd</strong>
-                      </div>
-                    </div>
-                    <div className="pin-progress">
-                      <span>Actual Progress: <strong>48%</strong></span>
-                      <span>Planned: <strong>72%</strong></span>
-                    </div>
-                    <div className="progress-bar"><span /></div>
-                    <div className="link-row">
-                      <span>3 Citizen Reports</span>
-                      <a href="#">Inspect Details →</a>
-                    </div>
-                  </div>
-                  <div className="pin-tip" />
-                </div>
-
-                <div className="map-legend">
-                  <span className="legend-item"><span className="legend-swatch" style={{ background: '#1d2d42' }} />On Track</span>
-                  <span className="legend-item"><span className="legend-swatch" style={{ background: '#d96c51' }} />Delayed / Stalled</span>
-                  <span className="legend-item"><span className="legend-swatch" style={{ background: '#7aa4d1' }} />Public Report</span>
-                </div>
-              </div>
             </section>
 
             <section className="data-table">
@@ -1961,6 +2012,124 @@ function CitizenDashboard() {
                   Certified work completion status, geotagged implementation updates, and verified dashboard records are
                   archived monthly for public review and audit.
                 </p>
+              </div>
+            </section>
+
+            <section className="map-panel">
+              <div className="panel-top">
+                <div className="panel-title-wrap">
+                  <span style={{ color: '#1d3b5e', fontSize: '1.1rem' }}>⌖</span>
+                  <h2>Area Infrastructure Map</h2>
+                </div>
+
+                <div className="section-switch">
+                  <button className="switch-btn active" type="button">Map View</button>
+                  <button className="switch-btn" type="button">List View</button>
+                </div>
+
+                <div className="filter-row">
+                  <div className="filter">
+                    <select defaultValue="All Sectors (24)">
+                      <option>All Sectors (24)</option>
+                      <option>Roads &amp; Connectivity</option>
+                      <option>Water &amp; Sanitation</option>
+                    </select>
+                    <span className="caret">▾</span>
+                  </div>
+
+                  <div className="filter">
+                    <select defaultValue="All Execution Statuses">
+                      <option>All Execution Statuses</option>
+                      <option>On Track (17)</option>
+                      <option>Delayed / Behind (7)</option>
+                    </select>
+                    <span className="caret">▾</span>
+                  </div>
+
+                  <div className="filter">
+                    <select defaultValue="All Blocks &amp; Wards">
+                      <option>All Blocks &amp; Wards</option>
+                      <option>Ludhiana West</option>
+                      <option>Sahnewal Rural Block</option>
+                    </select>
+                    <span className="caret">▾</span>
+                  </div>
+
+                  <button className="reset-btn" type="button" aria-label="Reset filters">↺</button>
+                </div>
+              </div>
+
+              <div className="map-stage">
+                <svg viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+                      <path d="M 42 0 L 0 0 0 42" fill="none" stroke="#ccd9ea" strokeWidth="1" />
+                    </pattern>
+                  </defs>
+                  <rect width="1000" height="420" fill="url(#grid)" opacity="0.5" />
+                  <path d="M-20 150 C150 170, 260 240, 500 250 S840 230, 1040 270" stroke="#8ab2d5" strokeWidth="9" fill="none" opacity="0.55" />
+                  <path d="M120 0 L450 220 L860 420" stroke="#d4deea" strokeWidth="12" fill="none" />
+                  <path d="M-40 300 L440 220 L980 170" stroke="#d4deea" strokeWidth="8" fill="none" />
+                  <path d="M420 220 L360 420" stroke="#d4deea" strokeWidth="8" fill="none" />
+                  <text x="340" y="185" fontSize="12" fill="#6b8197" fontWeight="700">SIDHWAN CANAL BRANCH</text>
+                  <text x="560" y="310" fontSize="11" fill="#6f7f97" fontWeight="700" transform="rotate(35 560 310)">NH-44 (GT ROAD) TO DELHI</text>
+                  <text x="200" y="260" fontSize="11" fill="#6f7f97" fontWeight="700" transform="rotate(-10 200 260)">FEROZEPUR ROAD (NH-5)</text>
+                  <text x="440" y="172" fontSize="11" fill="#616f80" fontWeight="700">LUDHIANA CENTRAL</text>
+                  <text x="170" y="120" fontSize="11" fill="#617086" fontWeight="700">CIVIL LINES ZONE</text>
+                  <text x="180" y="330" fontSize="11" fill="#617086" fontWeight="700">MODEL TOWN / MODEL GRAM</text>
+                  <text x="760" y="180" fontSize="11" fill="#617086" fontWeight="700">SAHNEWAL BLOCK</text>
+                  <text x="300" y="390" fontSize="11" fill="#617086" fontWeight="700">GILL RURAL CIRCLE</text>
+                </svg>
+
+                <div style={{ position: 'absolute', left: '20px', top: '20px', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.92)', border: '1px solid #dfe9f4', borderRadius: '10px', padding: '8px 10px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ fontWeight: '800', color: '#1d2d42', fontSize: '0.7rem' }}>N</div>
+                    <div style={{ fontSize: '1rem', color: '#304763' }}>⤢</div>
+                  </div>
+                  <div style={{ borderLeft: '1px solid #dfe9f4', paddingLeft: '8px', fontSize: '0.7rem', color: '#5d7389' }}>
+                    <div>Scale: 1:25,000</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                      <span style={{ display: 'inline-block', width: '40px', height: '3px', background: '#1d2d42', borderRadius: '999px' }} />
+                      <span>2.0 km</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="map-pin" style={{ left: '46%', top: '58%' }}>
+                  <div className="pin-card">
+                    <div className="tag-row">
+                      <span className="red-tag">Delayed • 24% Behind</span>
+                      <span>ID: PB-LDH-2023-041</span>
+                    </div>
+                    <h4>Rural Road Improvement: Gill Rd to NH44 Link</h4>
+                    <div className="pin-meta">
+                      <div>
+                        <span>Sanctioned:</span>
+                        <strong>₹1.28 Cr (MPLADS)</strong>
+                      </div>
+                      <div>
+                        <span>Contractor:</span>
+                        <strong>Satluj Infra Ltd</strong>
+                      </div>
+                    </div>
+                    <div className="pin-progress">
+                      <span>Actual Progress: <strong>48%</strong></span>
+                      <span>Planned: <strong>72%</strong></span>
+                    </div>
+                    <div className="progress-bar"><span /></div>
+                    <div className="link-row">
+                      <span>3 Citizen Reports</span>
+                      <a href="#">Inspect Details →</a>
+                    </div>
+                  </div>
+                  <div className="pin-tip" />
+                </div>
+
+                <div className="map-legend">
+                  <span className="legend-item"><span className="legend-swatch" style={{ background: '#1d2d42' }} />On Track</span>
+                  <span className="legend-item"><span className="legend-swatch" style={{ background: '#d96c51' }} />Delayed / Stalled</span>
+                  <span className="legend-item"><span className="legend-swatch" style={{ background: '#7aa4d1' }} />Public Report</span>
+                </div>
               </div>
             </section>
 

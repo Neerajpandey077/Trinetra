@@ -40,9 +40,6 @@ function Login() {
 
           <div className="brand-text">
             <div className="name">TRINETRA</div>
-            <div className="tagline">
-              See. Verify. Improve.
-            </div>
           </div>
 
           <div className="masthead-right">

@@ -106,7 +106,6 @@ function ProjectDetails() {
             <img src="/trinetra-logo.jpg" alt="TRINETRA logo" />
             <div>
               <strong>TRINETRA</strong>
-              <small>See. Verify. Improve.</small>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
