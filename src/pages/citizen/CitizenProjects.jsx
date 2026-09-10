@@ -806,9 +806,18 @@ const projectStyles = `
   }
 
   .view-link {
-    color: #123b5d;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+    padding: 8px 12px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #123b5d 0%, #2e6b9f 100%);
+    color: #ffffff !important;
     text-decoration: none;
-    font-weight: 700;
+    font-weight: 800;
+    font-size: 0.72rem;
+    box-shadow: 0 8px 18px rgba(18, 59, 93, 0.18);
   }
 
   .projects-pagination {

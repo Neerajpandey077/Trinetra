@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import CitizenThemeToggle from '../../components/common/CitizenThemeToggle';
 import { useCitizenTheme } from '../../context/CitizenThemeContext';
 
@@ -82,9 +82,12 @@ const styles = `
 `;
 
 function ReportIssue() {
+  const [searchParams] = useSearchParams();
   const [proof, setProof] = useState(null);
   const [proofError, setProofError] = useState('');
   const { theme } = useCitizenTheme();
+  const projectName = searchParams.get('project') || '';
+  const projectId = searchParams.get('projectId') || '';
 
   const handleProofChange = (event) => {
     const file = event.target.files?.[0];
@@ -141,18 +144,20 @@ function ReportIssue() {
 
         <section className="report-card">
           <h1>Report an Issue</h1>
-          <p>Submit civic issues with location details, urgency, and photo evidence for review.</p>
+          <p>
+            {projectName ? `Submitting a complaint for ${projectName}.` : 'Submit civic issues with location details, urgency, and photo evidence for review.'}
+          </p>
 
           <form onSubmit={handleSubmit}>
             <div className="report-grid">
               <div className="field">
                 <label>Issue title</label>
-                <input type="text" placeholder="e.g. Water pipeline leakage" required />
+                <input type="text" defaultValue={projectName ? `Issue in ${projectName}` : ''} placeholder="e.g. Water pipeline leakage" required />
               </div>
 
               <div className="field">
                 <label>Area / Ward</label>
-                <input type="text" placeholder="Ward 12, Ludhiana" required />
+                <input type="text" defaultValue={projectId ? `Project ID: ${projectId}` : ''} placeholder="Ward 12, Ludhiana" required />
               </div>
 
               <div className="field">

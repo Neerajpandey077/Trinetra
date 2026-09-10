@@ -407,6 +407,20 @@ const styles = `
     border-color: #f0d0d0;
   }
 
+  .contractor-view-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #123b5d 0%, #2e6b9f 100%);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.72rem;
+    font-weight: 800;
+    box-shadow: 0 8px 18px rgba(18, 59, 93, 0.18);
+  }
+
   @media (max-width: 900px) {
     .contractors-shell { flex-direction: column; }
     .contractors-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #dde7f2; }
@@ -525,6 +539,7 @@ function Contractors() {
                       <th>Score</th>
                       <th>Last Audit</th>
                       <th>Status</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -545,6 +560,11 @@ function Contractors() {
                           <span className={`status-badge ${contractor.status === 'Verified' ? 'status-verified' : contractor.status === 'Review' ? 'status-review' : 'status-flagged'}`}>
                             {contractor.status}
                           </span>
+                        </td>
+                        <td>
+                          <Link to={`/citizen/contractors/${encodeURIComponent(contractor.name)}`} className="contractor-view-link">
+                            View
+                          </Link>
                         </td>
                       </tr>
                     ))}

@@ -1404,9 +1404,23 @@ const dashboardStyles = `
   }
 
   .mini-link {
-    color: #184e78;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: #edf4ff;
+    color: #123b5d;
     text-decoration: none;
-    font-weight: 700;
+    font-weight: 800;
+    font-size: 0.68rem;
+    border: 1px solid #dfeaf6;
+  }
+
+  .mini-link.primary {
+    background: linear-gradient(135deg, #123b5d 0%, #2e6b9f 100%);
+    color: #fff;
+    border-color: transparent;
   }
 
   .mini-link.secondary {
@@ -1615,6 +1629,7 @@ const stats = [
 const tableRows = [
   {
     id: 'PB-LDH-2023-041',
+    projectId: 'MPLADS-2025-0142',
     title: 'Rural Road Improvement: Gill Rd to NH44 Link',
     area: 'Gill Rural & Industrial',
     contractor: 'Satluj Infra Ltd',
@@ -1623,10 +1638,11 @@ const tableRows = [
     target: '72%',
     status: 'Delayed',
     statusClass: 'delayed',
-    actions: ['Audit', 'Report'],
+    actions: ['View', 'Report'],
   },
   {
     id: 'PB-LDH-2023-072',
+    projectId: 'MPLADS-2025-0187',
     title: 'Senior Secondary School Upgrade',
     area: 'Model Town',
     contractor: 'Apex Builders',
@@ -1635,10 +1651,11 @@ const tableRows = [
     target: '90%',
     status: 'On Track',
     statusClass: 'on-track',
-    actions: ['Audit', 'Report'],
+    actions: ['View', 'Report'],
   },
   {
     id: 'PB-LDH-2023-118',
+    projectId: 'MPLADS-2025-0211',
     title: 'Drinking Water Reservoir & Pipeline',
     area: 'Ward 24',
     contractor: 'Doaba Water Tech',
@@ -1647,10 +1664,11 @@ const tableRows = [
     target: '70%',
     status: 'Delayed',
     statusClass: 'delayed',
-    actions: ['Audit', 'Report'],
+    actions: ['View', 'Report'],
   },
   {
     id: 'PB-LDH-2023-221',
+    projectId: 'MPLADS-2025-0410',
     title: 'Community Health Centre Diagnostic Wing',
     area: 'Sahnewal Block',
     contractor: 'Sahnewal Block',
@@ -1659,10 +1677,11 @@ const tableRows = [
     target: '94%',
     status: 'In Progress',
     statusClass: 'in-progress',
-    actions: ['Audit', 'Report'],
+    actions: ['View', 'Report'],
   },
   {
     id: 'PB-LDH-2023-301',
+    projectId: 'MPLADS-2025-0317',
     title: 'High-Efficiency Solar & LED Lighting',
     area: 'Civil Lines Zone',
     contractor: 'GreenGrid Power',
@@ -1671,7 +1690,7 @@ const tableRows = [
     target: '30%',
     status: 'Under Review',
     statusClass: 'under-review',
-    actions: ['Audit', 'Report'],
+    actions: ['View', 'Report'],
   },
 ];
 
@@ -1946,9 +1965,19 @@ function CitizenDashboard() {
                         </td>
                         <td>
                           <div className="action-links">
-                            {row.actions.map((action) => (
-                              <a key={action} href="#" className="mini-link secondary">{action}</a>
-                            ))}
+                            {row.actions.map((action) => {
+                              const isView = action === 'View';
+                              if (isView) {
+                                return (
+                                  <Link key={action} to={`/citizen/projects/${row.projectId}`} className="mini-link primary">
+                                    {action}
+                                  </Link>
+                                );
+                              }
+                              return (
+                                <a key={action} href="#" className="mini-link secondary">{action}</a>
+                              );
+                            })}
                           </div>
                         </td>
                       </tr>
@@ -1972,6 +2001,9 @@ function CitizenDashboard() {
                         <div className="contractor-score">
                           <strong>{person.score}</strong>
                           <span>score</span>
+                          <Link to={`/citizen/contractors/${encodeURIComponent(person.name)}`} className="mini-link primary" style={{ marginTop: '6px' }}>
+                            View
+                          </Link>
                         </div>
                       </div>
                     ))}

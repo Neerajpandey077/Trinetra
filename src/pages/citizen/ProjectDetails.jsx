@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import CitizenThemeToggle from '../../components/common/CitizenThemeToggle';
 import { useCitizenTheme } from '../../context/CitizenThemeContext';
 
@@ -50,9 +50,19 @@ const styles = `
   .project-detail-page.dark-theme .meta-box,
   .project-detail-page.dark-theme .timeline-item,
   .project-detail-page.dark-theme .brand small,
-  .project-detail-page.dark-theme .back-link {
+  .project-detail-page.dark-theme .back-link,
+  .project-detail-page.dark-theme .report-project-btn {
     background: #131f2d !important;
     border-color: rgba(148, 167, 190, 0.22) !important;
+    color: var(--title-color) !important;
+  }
+
+  .project-detail-page.dark-theme .project-header h1,
+  .project-detail-page.dark-theme .meta-value,
+  .project-detail-page.dark-theme .summary p,
+  .project-detail-page.dark-theme .timeline-item strong,
+  .project-detail-page.dark-theme .timeline-item span,
+  .project-detail-page.dark-theme .brand strong {
     color: var(--title-color) !important;
   }
 
@@ -79,11 +89,27 @@ const styles = `
   .timeline-item { background: var(--card-soft); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
   .timeline-item strong { display: block; color: #17212b; margin-bottom: 8px; }
   .timeline-item span { font-size: 0.76rem; color: #52677d; line-height: 1.6; }
+  .report-project-btn {
+    margin-top: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid #123b5d;
+    background: linear-gradient(135deg, #123b5d 0%, #295a87 100%);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+  }
   @media (max-width: 760px) { .meta-grid, .timeline { grid-template-columns: 1fr; } .project-header { flex-direction: column; } }
 `;
 
 function ProjectDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { theme } = useCitizenTheme();
   const project = projectDetails[id] || {
     title: 'Project Details',
@@ -163,6 +189,14 @@ function ProjectDetails() {
               ))}
             </div>
           </div>
+
+          <button
+            type="button"
+            className="report-project-btn"
+            onClick={() => navigate(`/citizen/report?project=${encodeURIComponent(project.title)}&projectId=${encodeURIComponent(project.id)}`)}
+          >
+            Report issue for this project
+          </button>
         </section>
       </div>
     </div>
