@@ -1,222 +1,211 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./Login.css";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { getDashboardPath } from '../../constants/dashboardRoutes';
+import './Login.css';
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateIdentifier(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return 'Please enter your email.';
+  if (trimmed.includes('@') && !EMAIL_PATTERN.test(trimmed)) {
+    return 'Please enter a valid email address.';
+  }
+  return '';
+}
 
 function Login() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
+  const { login } = useAuth();
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [fieldError, setFieldError] = useState({ identifier: '', password: '' });
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
 
-    if (!identifier || !password) {
-      alert("Please enter your email/mobile number and password.");
-      return;
+    const identifierMessage = validateIdentifier(identifier);
+    const passwordMessage = password ? '' : 'Please enter your password.';
+    setFieldError({ identifier: identifierMessage, password: passwordMessage });
+
+    if (identifierMessage || passwordMessage) return;
+
+    setSubmitting(true);
+
+    try {
+      const result = await login(identifier, password, remember);
+
+      if (!result.ok) {
+        if (result.code === 'UNKNOWN_ACCOUNT') {
+          setError('Account not found. Please check your credentials.');
+        } else {
+          setError('Incorrect email or password. Please try again.');
+        }
+        return;
+      }
+
+      navigate(getDashboardPath(result.user.role), { replace: true });
+    } catch {
+      setError('Unable to sign in right now. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
-
-    alert("Login successful!");
-    navigate("/citizen");
-
-    // Later we will replace this with:
-    // API call → FastAPI → PostgreSQL → dashboard
   };
 
   return (
-    <div className="login-page">
-
-      {/* HEADER */}
-      <header className="masthead">
-        <div className="masthead-inner">
-
-          <div className="logo-plate">
-            <img
-              src="/trinetra-logo.jpg"
-              alt="TRINETRA logo"
-            />
+    <div className="trinetra-auth">
+      <section className="auth-brand" aria-label="TRINETRA">
+        <div className="auth-brand-inner">
+          <div className="auth-logo-row">
+            <div className="auth-logo-plate">
+              <img src="/trinetra-logo.jpg" alt="TRINETRA logo" />
+            </div>
+            <div>
+              <p className="auth-kicker">Secure Government Access</p>
+              <h1>TRINETRA</h1>
+            </div>
           </div>
 
-          <div className="brand-text">
-            <div className="name">TRINETRA</div>
-          </div>
-
-          <div className="masthead-right">
-            Public Infrastructure Monitoring System
+          <h2>
+            Government Project Monitoring
             <br />
-            MPLAD Scheme Transparency Portal
-          </div>
+            &amp; Transparency Platform
+          </h2>
 
-        </div>
-      </header>
-
-      {/* MAIN */}
-      <main className="login-main">
-
-        <div className="login-card">
-
-          <div className="card-eyebrow">
-            Secure sign-in
-          </div>
-
-          <h1>Sign in to TRINETRA</h1>
-
-          <p className="lead">
-            Enter your registered email or mobile number and password
-            to continue.
+          <p className="auth-statement">
+            Enabling transparent, accountable and data-driven monitoring of public infrastructure.
           </p>
 
-          <form onSubmit={handleSubmit}>
+          <ul className="auth-pillars">
+            <li>Roads, bridges and civic works</li>
+            <li>Field progress and expenditure tracking</li>
+            <li>Role-based secure access</li>
+          </ul>
+        </div>
 
-            {/* EMAIL / MOBILE */}
-            <div className="field">
+        <svg className="auth-infra" viewBox="0 0 640 280" aria-hidden="true">
+          <path d="M0 220 L90 168 L140 188 L230 120 L310 168 L390 96 L480 150 L560 118 L640 160 V280 H0 Z" fill="rgba(255,255,255,0.05)" />
+          <path d="M0 236 H640" stroke="rgba(166,202,186,0.35)" strokeWidth="2" />
+          <path d="M40 236 V188 H70 V236" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="3" />
+          <path d="M180 236 C220 150, 280 150, 320 236" fill="none" stroke="rgba(166,202,186,0.45)" strokeWidth="3" />
+          <path d="M430 236 V150 H455 V236" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="3" />
+          <circle cx="540" cy="96" r="18" fill="none" stroke="rgba(166,202,186,0.28)" strokeWidth="2" />
+        </svg>
+      </section>
 
-              <label htmlFor="identifier">
-                Email or mobile number
-              </label>
+      <section className="auth-panel">
+        <div className="auth-card">
+          <p className="auth-card-kicker">Secure sign-in</p>
+          <h2>Welcome to Trinetra</h2>
+          <p className="auth-lead">Members-only sign in to access your dashboard</p>
 
-              <div className="input-row">
+          {error ? (
+            <div className="auth-alert" role="alert">
+              {error}
+            </div>
+          ) : null}
 
-                <input
-                  type="text"
-                  id="identifier"
-                  name="identifier"
-                  placeholder="you@example.com or 98765 43210"
-                  autoComplete="username"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  required
-                />
-
-              </div>
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="auth-field">
+              <label htmlFor="identifier">Email / Registered ID</label>
+              <input
+                id="identifier"
+                name="identifier"
+                type="text"
+                autoComplete="username"
+                placeholder="you@example.com or registered ID"
+                value={identifier}
+                onChange={(event) => {
+                  setIdentifier(event.target.value);
+                  setFieldError((current) => ({ ...current, identifier: '' }));
+                }}
+                aria-invalid={Boolean(fieldError.identifier)}
+                aria-describedby={fieldError.identifier ? 'identifier-error' : undefined}
+                disabled={submitting}
+              />
+              {fieldError.identifier ? (
+                <p id="identifier-error" className="auth-field-error">
+                  {fieldError.identifier}
+                </p>
+              ) : null}
             </div>
 
-            {/* PASSWORD */}
-            <div className="field">
-
-              <label htmlFor="password">
-                Password
-              </label>
-
-              <div className="input-row">
-
+            <div className="auth-field">
+              <label htmlFor="password">Password</label>
+              <div className="auth-input-wrap">
                 <input
-                  type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
-                  placeholder="Enter your password"
+                  type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
+                  placeholder="Enter your password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                    setFieldError((current) => ({ ...current, password: '' }));
+                  }}
+                  aria-invalid={Boolean(fieldError.password)}
+                  aria-describedby={fieldError.password ? 'password-error' : undefined}
+                  disabled={submitting}
                 />
-
                 <button
                   type="button"
-                  className="toggle-visibility"
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
+                  className="auth-visibility"
+                  onClick={() => setShowPassword((value) => !value)}
                   aria-pressed={showPassword}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword ? 'Hide' : 'Show'}
                 </button>
-
               </div>
+              {fieldError.password ? (
+                <p id="password-error" className="auth-field-error">
+                  {fieldError.password}
+                </p>
+              ) : null}
             </div>
 
-            {/* REMEMBER / FORGOT */}
-            <div className="row-between">
-
-              <label className="remember">
-
+            <div className="auth-row">
+              <label className="auth-remember">
                 <input
                   type="checkbox"
                   checked={remember}
-                  onChange={(e) =>
-                    setRemember(e.target.checked)
-                  }
+                  onChange={(event) => setRemember(event.target.checked)}
                 />
-
                 Remember me
-
               </label>
-
-              <a href="#" className="forgot-link">
+              <Link className="auth-forgot" to="/forgot-password">
                 Forgot password?
-              </a>
-
+              </Link>
             </div>
 
-            {/* SIGN IN */}
-            <button
-              type="submit"
-              className="btn-primary"
-            >
-              Sign In
+            <button className="auth-submit" type="submit" disabled={submitting}>
+              {submitting ? (
+                <>
+                  <span className="auth-spinner" aria-hidden="true" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </button>
-
-            <p className="redirect-note">
-              You will be directed to your citizen or officer
-              dashboard based on your registered account.
-            </p>
-
           </form>
 
-          {/* DIVIDER */}
-          <div className="divider">
-            <span>or</span>
-          </div>
-
-          {/* REGISTER */}
-          <p className="register-line">
-            New to TRINETRA?{" "}
-            <a href="#">
-              Create an account
-            </a>
+          <p className="auth-note">
+            Access is assigned to your registered account. You will be directed to the dashboard linked to that account.
           </p>
-
-          {/* SECURITY */}
-          <div className="security-note">
-
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              width="15"
-              height="15"
-            >
-              <rect
-                x="4"
-                y="10"
-                width="16"
-                height="10"
-                rx="1.5"
-              />
-
-              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-            </svg>
-
-            <span>
-              Encrypted, session-based authentication.
-              Your password is never stored in plain text.
-            </span>
-
-          </div>
-
         </div>
 
-      </main>
-
-      {/* FOOTER */}
-      <footer>
-        © 2026 TRINETRA — Built for{" "}
-        <strong>Smart India Hackathon</strong> by Team{" "}
-        <strong>Foresight Perceivers</strong>
-      </footer>
-
+        <p className="auth-foot">
+          © 2026 TRINETRA — Smart India Hackathon by Team Foresight Perceivers
+        </p>
+      </section>
     </div>
   );
 }
